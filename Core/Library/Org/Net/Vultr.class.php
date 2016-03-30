@@ -35,16 +35,21 @@ class Vultr{
     if($Var!='')curl_setopt( $ch, CURLOPT_POSTFIELDS,$Var );
     //设置超时时间
     curl_setopt( $ch, CURLOPT_TIMEOUT, 30 );
-    //得到返回的Json源码
+    //获取返回的Json源码
     curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
     //发送请求并对返回的结果进行Json解码
     $response =json_decode(curl_exec($ch),1);
-    //得到Http返回状态
+    //获取Http返回状态
     $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     //释放Curl
     curl_close($ch);
     //返回资源数据与Http状态
     return array($http_status,$response);
+  }
+  //获取主账号资金信息
+  function GetAccoutInfo(){
+    $r = $this->SendCommand("account/info");
+    return $r[0]==200?$r[1]:null;
   }
   //得到所有Vps信息
   function GetAllServerInfo(){
@@ -102,7 +107,7 @@ class Vultr{
     $r = $this->SendCommand("server/upgrade_plan_list",null,$data);
     return $r[0]==200?true:null;
   }
-  //得到可选Os系统列表
+  //获取可选OS系统列表
   function GetOs(){
     $r = $this->SendCommand("os/list",null,null);
     return $r[0]==200?$this->OptimizeOsList($r[1]):null;
@@ -125,12 +130,12 @@ class Vultr{
     unset($Os['186']);
     return $Os;
   }
-  //得到可选套餐列表
+  //获取可选套餐列表
   function GetPlans(){
     $r = $this->SendCommand("plans/list",null,null);
     return $r[0]==200?$r[1]:null;
   }
-  //得到可选地区列表
+  //获取可选地区列表
   function GetRegions(){
     $r = $this->SendCommand("regions/list",null,null);
     return $r[0]==200?$r[1]:null;
@@ -180,7 +185,7 @@ class Vultr{
     if(trim($subid)=='')return false;
     $data['SUBID'] = trim($subid);
     $r = $this->SendCommand("server/bandwidth",null,$data);
-    return $r[0]==200?$true:false;
+    return $r[0]==200?true:false;
   }
   //获取一台Vps的所有Ipv4地址
   function GetServerIpv4($subid){
@@ -202,13 +207,87 @@ class Vultr{
     $data['SUBID'] = trim($subid);
     $data['OSID'] = trim($osid);
     $r = $this->SendCommand("server/os_change",null,$data);
-    return $r[0]==200?$true:false;
+    return $r[0]==200?true:false;
+  }
+  //获取一台Vps可更换的App列表
+  function GetServerAppChangeList($subid){
+    if(trim($subid)=='')return null;
+    $data['SUBID'] = trim($subid);
+    $r = $this->SendCommand("server/app_change_list",$data,null);
+    return $r[0]==200?$r[1]:null;
+  }
+  //Vps更换APP(数据丢失不可撤销!慎用)
+  function ServerAppChange($subid,$appid){
+    if(trim($subid)==''||trim($appid)=='')return false;
+    $data['SUBID'] = trim($subid);
+    $data['APPID'] = trim($appid);
+    $r = $this->SendCommand("server/app_change",null,$data);
+    return $r[0]==200?true:false;
   }
   //Vps系统恢复初始状态(数据丢失不可撤销!慎用)
   function ServerReinstall($subid){
     if(trim($subid)=='')return false;
     $data['SUBID'] = trim($subid);
     $r = $this->SendCommand("server/reinstall",null,$data);
-    return $r[0]==200?$true:false;
+    return $r[0]==200?true:false;
+  }
+  //创建Vps SSH登陆密钥
+  function CreateSshKey($name,$ssh_key){
+    if(trim($name)==''||trim($ssh_key)=='')return false;
+    $data['name'] = trim($name);
+    $data['ssh_key'] = trim($ssh_key);
+    $r = $this->SendCommand("sshkey/create",null,$data);
+    return $r[0]==200?$r[1]['SSHKEYID']:false;
+  }
+  //删除SSH密钥
+  function DestroySshKey($sshkeyid){
+    if(trim($sshkeyid)=='')return false;
+    $data['SSHKEYID'] = trim($sshkeyid);
+    $r = $this->SendCommand("sshkey/destroy",null,$data);
+    return $r[0]==200?true:false;
+  }
+  //列出所有SSH密钥
+  function ListSshKey(){
+    $r = $this->SendCommand("sshkey/list");
+    return $r[0]==200?$r[1]:null;
+  }
+  //更新指定SSH密钥
+  function UpdateSshKey($sshkeyid,$name,$ssh_key){
+    if(trim($sshkeyid)==''||trim($name)==''||trim($ssh_key)=='')return false;
+    $data['SSHKEYID'] = trim($sshkeyid);
+    $data['name'] = trim($name);
+    $data['ssh_key'] = trim($ssh_key);
+    $r = $this->SendCommand("sshkey/update",null,$data);
+    return $r[0]==200?true:false;
+  }
+  //创建Vps Startup Script启动脚本 (TYPE boot|pxe)
+  function CreateScript($name,$script,$type = 'boot'){
+    if(trim($name)==''||$script=='')return false;
+    $data['name'] = trim($name);
+    $data['script'] = $script;
+    $data['type'] = trim($type);
+    $r = $this->SendCommand("startupscript/create",null,$data);
+    return $r[0]==200?$r[1]['SCRIPTID']:false;
+  }
+  //删除Startup Script启动脚本
+  function DestroyScript($scriptid){
+    if(trim($scriptid)=='')return false;
+    $data['SCRIPTID'] = trim($scriptid);
+    $r = $this->SendCommand("startupscript/destroy",null,$data);
+    return $r[0]==200?true:false;
+  }
+  //列出所有Startup Script启动脚本
+  function ListScript(){
+    $r = $this->SendCommand("startupscript/list");
+    return $r[0]==200?$r[1]:null;
+  }
+  //更新指定Startup Script启动脚本
+  function UpdateScript($scriptid,$name,$script){
+    if(trim($scriptid)==''||trim($name)==''||$script=='')return false;
+    $data['SCRIPTID'] = trim($scriptid);
+    $data['name'] = trim($name);
+    $data['script'] = $script;
+    $r = $this->SendCommand("startupscript/update",null,$data);
+    return $r[0]==200?true:false;
   }
 }
