@@ -1,0 +1,32 @@
+<?php
+return array(
+  'ChineseLanguage'=>array(
+    'Regions'=>array(
+      'North America'=>'北美洲',
+      'Europe'=>'欧洲',
+      'Asia'=>'亚洲',
+      'Australia'=>'澳大利亚',
+      'Atlanta'=>'亚特兰大',
+      'Chicago'=>'芝加哥',
+      'Dallas'=>'达拉斯市',
+      'Los Angeles'=>'洛杉矶',
+      'Miami'=>'迈阿密',
+      'New Jersey'=>'新泽西州',
+      'Seattle'=>'西雅图',
+      'Silicon Valley'=>'硅谷',
+      'Amsterdam'=>'阿姆斯特丹',
+      'London'=>'伦敦',
+      'Paris'=>'巴黎',
+      'Frankfurt'=>'法兰克福',
+      'Tokyo'=>'东京',
+      'Sydney'=>'悉尼',
+      'US'=>'美国',
+      'GB'=>'英国',
+      'FR'=>'法国',
+      'NL'=>'荷兰',
+      'DE'=>'德国',
+      'JP'=>'日本',
+      'AU'=>'澳大利亚',
+    ),
+  ),
+);

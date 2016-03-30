@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>Neko Vps | Moe Vps</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp"/>
+  <link rel="alternate icon" type="image/png" href="__PUBLIC__/assets/images/cat.png">
+  <link rel="stylesheet" href="__PUBLIC__/assets/css/amazeui.min.css"/>
+  <script src="__PUBLIC__/assets/js/jquery.min.js"></script>
+  <script src="__PUBLIC__/assets/js/amazeui.min.js"></script>
+  <style type="text/css">
+    
+  </style>
+</head>
+<body>
+服务器地区：
+<select data-am-selected="{btnSize: 'sm', btnStyle: 'secondary',maxHeight:300,searchBox: 1}">
+<foreach name="regionsList" item="regionsGroup" key="k" >
+  <optgroup label="{$k}">
+  <volist name="regionsGroup" id="regions">
+  <option value="{$regions.DCID}">{$regions.country} - {$regions.name}机房</option>
+  </volist>
+  </optgroup>
+</foreach>
+</select>
+<br>
+<br>
+操作系统：
+<select data-am-selected="{btnSize: 'sm', btnStyle: 'secondary',maxHeight:300,searchBox: 1}">
+<foreach name="osList" item="osGroup" key="k" >
+  <optgroup label="{$k}">
+  <volist name="osGroup" id="os">
+  <option value="{$os.OSID}">{$os.name}</option>
+  </volist>
+  </optgroup>
+</foreach>
+</select>
+<br>
+<br>
+<volist name="planList" id="plan">
+  <button class="am-btn am-btn-secondary am-btn-xl">{$plan.name}</button>
+</volist>
+</body>
+</html>
