@@ -150,13 +150,28 @@ class Vultr{
     }
     return $regions;
   }
-  //得到可安装的一键应用程序包
+  //获取可安装的一键应用程序包
   function GetApplication(){
     $r = $this->SendCommand("app/list",null,null);
     return $r[0]==200?$r[1]:null;
   }
+  //获取上传的ISO镜像文件
   function GetMyIso(){
     $r = $this->SendCommand("iso/list",null,null);
     return $r[0]==200?$r[1]:null;
+  }
+  //获取一台服务器的流量信息
+  function GetBandWidth($subid){
+    if(trim($subid)=='')return null;
+    $data['SUBID'] = trim($subid);
+    $r = $this->SendCommand("server/bandwidth",$data,null);
+    return $r[0]==200?$r[1]:null;
+  }
+  //删除一台服务器(数据丢失不可撤销!慎用)
+  function DestroyServer($subid){
+    if(trim($subid)=='')return null;
+    $data['SUBID'] = trim($subid);
+    $r = $this->SendCommand("server/bandwidth",null,$data);
+    return $r[0]==200?$true:false;
   }
 }
