@@ -88,11 +88,19 @@ class Vultr{
     return $r[0]==200?true:false;
   }
   //获取Vps可升级套餐
-  function GetServerPlanList($subid){
+  function GetServerUpgradePlan($subid){
     if(trim($subid)=='')return null;
     $data['SUBID'] = trim($subid);
     $r = $this->SendCommand("server/upgrade_plan_list",$data,null);
     return $r[0]==200?$r[1]:null;
+  }
+  //Vps套餐升级
+  function ServerUpgradePlan($subid,$vpsplanid){
+    if(trim($subid)==''||trim($vpsplanid)=='')return false;
+    $data['SUBID'] = trim($subid);
+    $data['VPSPLANID'] = trim($vpsplanid);
+    $r = $this->SendCommand("server/upgrade_plan_list",null,$data);
+    return $r[0]==200?true:null;
   }
   //得到可选Os系统列表
   function GetOs(){
@@ -160,18 +168,47 @@ class Vultr{
     $r = $this->SendCommand("iso/list",null,null);
     return $r[0]==200?$r[1]:null;
   }
-  //获取一台服务器的流量信息
+  //获取一台Vps的流量信息
   function GetBandWidth($subid){
     if(trim($subid)=='')return null;
     $data['SUBID'] = trim($subid);
     $r = $this->SendCommand("server/bandwidth",$data,null);
     return $r[0]==200?$r[1]:null;
   }
-  //删除一台服务器(数据丢失不可撤销!慎用)
+  //删除一台Vps(数据丢失不可撤销!慎用)
   function DestroyServer($subid){
-    if(trim($subid)=='')return null;
+    if(trim($subid)=='')return false;
     $data['SUBID'] = trim($subid);
     $r = $this->SendCommand("server/bandwidth",null,$data);
+    return $r[0]==200?$true:false;
+  }
+  //获取一台Vps的所有Ipv4地址
+  function GetServerIpv4($subid){
+    if(trim($subid)=='')return null;
+    $data['SUBID'] = trim($subid);
+    $r = $this->SendCommand("server/list_ipv4",$data,null);
+    return $r[0]==200?$r[1]:null;
+  }
+  //获取一台Vps可更换的OS系统列表
+  function GetServerOsChangeList($subid){
+    if(trim($subid)=='')return null;
+    $data['SUBID'] = trim($subid);
+    $r = $this->SendCommand("server/os_change_list",$data,null);
+    return $r[0]==200?$r[1]:null;
+  }
+  //Vps更换OS系统(数据丢失不可撤销!慎用)
+  function ServerOsChange($subid,$osid){
+    if(trim($subid)==''||trim($osid)=='')return false;
+    $data['SUBID'] = trim($subid);
+    $data['OSID'] = trim($osid);
+    $r = $this->SendCommand("server/os_change",null,$data);
+    return $r[0]==200?$true:false;
+  }
+  //Vps系统恢复初始状态(数据丢失不可撤销!慎用)
+  function ServerReinstall($subid){
+    if(trim($subid)=='')return false;
+    $data['SUBID'] = trim($subid);
+    $r = $this->SendCommand("server/reinstall",null,$data);
     return $r[0]==200?$true:false;
   }
 }
